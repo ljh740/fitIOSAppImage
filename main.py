@@ -8,7 +8,6 @@ import queue
 import sys
 import threading
 import time
-from pathlib import Path
 
 import tinify
 
@@ -74,6 +73,39 @@ def printProcess(threadName):
     process = '%0.2f' % (finishCount / count * 100)
     print(f'总共{count},当前{finishCount},进度{process}%,完成线程:{threadName}')
 
+def modifyImageset(path):
+    if 'imageset' == path[-8:]:
+        with open(os.path.join(path, 'Contents.json'), 'r') as f:
+            config = json.loads(f.read())
+            dirs = os.listdir(path)
+            images = config['images']
+            needWrite = False
+            dirPaths = os.path.split(path)
+            imagesetName = dirPaths[-1][:-9]
+            modifyList = {}
+            for im in images:
+                filename = im.get('filename')
+                if filename:
+                    scale = im['scale']
+                    new_file_name = f'{imagesetName}@{scale}.png'
+                    if filename != new_file_name:
+                        needWrite = True
+                        modifyList[filename] = new_file_name
+                        im['filename'] = new_file_name
+
+            if needWrite:
+                for key in modifyList:
+                    oldPath = os.path.join(path,key)
+                    newPath = os.path.join(path,modifyList[key])
+                    if os.path.isfile(oldPath):
+                        os.rename(oldPath,newPath)
+
+                with open(os.path.join(path, 'Contents.json'), 'w', encoding='UTF-8') as wf:
+                    text = json.dumps(config)
+                    wf.write(text)
+                    wf.close()
+    else:
+        ergodicDirs(path, modifyImageset)
 
 def checkImageset(path):
     if 'imageset' == path[-8:]:
@@ -84,6 +116,7 @@ def checkImageset(path):
             images = config['images']
             image1x = None
             canDelete = False
+            needModifyList = {}
             for im in images:
                 filename = im.get('filename')
                 if filename:
@@ -125,11 +158,10 @@ def ergodicDirs(path, func):
     dirs = os.listdir(path)
     for file in dirs:
         currentPath = os.path.join(path, file)
-        currentPathObj = Path(currentPath)
-        if currentPathObj.is_dir():
+        if os.path.isdir(currentPath):
             if func:
                 func(currentPath)
-        elif currentPathObj.is_file():
+        elif os.path.isfile(currentPath):
             if file != 'Contents.json':
                 print(f'ignore file : {currentPath}')
 
@@ -140,8 +172,7 @@ def removeList():
 
     if canExecution:
         for file in needRemoveList:
-            filePath = Path(file)
-            if filePath.is_file():
+            if os.path.isfile(file):
                 os.remove(file)
             else:
                 print(f'未删除的目录:{file}')
@@ -189,6 +220,8 @@ def slimImage(path):
 
     print('任务完成')
 
+def formatImageName(path):
+    ergodicDirs(path, modifyImageset)
 
 def tinySlimImage(path):
     fileMD5 = hashlib.md5(open(path, 'rb').read()).hexdigest()
@@ -220,13 +253,18 @@ def tinySlimImage(path):
 
 
 if __name__ == '__main__':
+    # workspacePath = '/Users/jie/Desktop/workCode/XQXC_CUSTUMER_NATIVE_modify/XQXC_CUSTUMER_NATIVE'
+    # imageXcassetsName = 'Images.xcassets'
+    # imageXcassetsPath = f'{workspacePath}/{imageXcassetsName}'
+    # formatImageName(imageXcassetsPath)
+    # exit(0)
 
     # print(len(sys.argv),sys.argv)
     if len(sys.argv) != 4:
         print(
             '''
             请传入正确参数.
-            python3 main.py 工程目录 xcassets名称 模式(1 清除1x图 2 压缩图片)
+            python3 main.py 工程目录 xcassets名称 模式(1 清除1x图 2 压缩图片 3 格式化图片名称)
             
             ex: python3 main.py "~/Desktop/workCode/iOSCode" "Images" 1
             
@@ -248,6 +286,10 @@ if __name__ == '__main__':
                 print('无有效的TinyKey')
             else:
                 slimImage(imageXcassetsPath)
+        elif mode == 3:
+            print('启动格式化模式')
+            time.sleep(2)
+            formatImageName(imageXcassetsPath)
 
 # TinyKey
 # lJcr96FHq74Dt4KY7K0SnSsLwzzZg0Z9
