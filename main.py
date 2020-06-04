@@ -18,7 +18,7 @@ TinyKeys = [
     'lJcr96FHq74Dt4KY7K0SnSsLwzzZg0Z9',
     'FmnXgPcNy8CYvjYpwJDXCBS9bykcsGzW',
     'Q8Pzzrwtlpptlc3hthyXTmTjyK4txQZc',
-    'Q8Pzzrwtlpptlc3hthyXTmTjyK4txQZc'
+    '7ngVLwtXvhtbk0j2hhGbLChWJyVYLVVw'
 ]
 
 needRemoveList = []
@@ -101,9 +101,9 @@ def modifyImageset(path):
                         os.rename(oldPath,newPath)
 
                 with open(os.path.join(path, 'Contents.json'), 'w', encoding='UTF-8') as wf:
-                    text = json.dumps(config)
-                    wf.write(text)
-                    wf.close()
+                    json.dump(config,wf,indent=2,ensure_ascii=False)
+                    # wf.write(text)
+                    # wf.close()
     else:
         ergodicDirs(path, modifyImageset)
 
@@ -141,9 +141,9 @@ def checkImageset(path):
             # 将文件回写回去
             if canExecution:
                 with open(os.path.join(path, 'Contents.json'), 'w', encoding='UTF-8') as wf:
-                    text = json.dumps(config)
-                    wf.write(text)
-                    wf.close()
+                    json.dump(config,wf,indent=2,ensure_ascii=False)
+                    # wf.write(text)
+                    # wf.close()
 
             # 移除json 检索需要删除的文件
             dirs.remove('Contents.json')
@@ -256,7 +256,8 @@ if __name__ == '__main__':
     # workspacePath = '/Users/jie/Desktop/workCode/XQXC_CUSTUMER_NATIVE_modify/XQXC_CUSTUMER_NATIVE'
     # imageXcassetsName = 'Images.xcassets'
     # imageXcassetsPath = f'{workspacePath}/{imageXcassetsName}'
-    # formatImageName(imageXcassetsPath)
+    # # formatImageName(imageXcassetsPath)
+    # clear1XImage(imageXcassetsPath)
     # exit(0)
 
     # print(len(sys.argv),sys.argv)
@@ -266,7 +267,7 @@ if __name__ == '__main__':
             请传入正确参数.
             python3 main.py 工程目录 xcassets名称 模式(1 清除1x图 2 压缩图片 3 格式化图片名称)
             
-            ex: python3 main.py "~/Desktop/workCode/iOSCode" "Images" 1
+            ex: python3 main.py "/User/a/Desktop/workCode/iOSCode" "Images" 1
             
             ''')
     else:
@@ -275,6 +276,7 @@ if __name__ == '__main__':
         imageXcassetsPath = f'{workspacePath}/{imageXcassetsName}'
         md5Manager = MD5Mgr()
         mode = int(sys.argv[3])
+        print(imageXcassetsPath)
         if mode == 1:
             print('启动清除1x模式')
             time.sleep(2)
