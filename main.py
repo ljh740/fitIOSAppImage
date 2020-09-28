@@ -245,7 +245,10 @@ def tinySlimImage(path):
 
     except tinify.errors.AccountError:
         print(f'{key} 已超额')
-        TinyKeys.remove(key)
+        try:
+            TinyKeys.remove(key)
+        except:
+            pass
         tinySlimImage(path)
     except BaseException as e:
         print('some error' + e)
@@ -253,11 +256,12 @@ def tinySlimImage(path):
 
 
 if __name__ == '__main__':
+    md5Manager = MD5Mgr()
     # workspacePath = '/Users/jie/Desktop/workCode/XQXC_CUSTUMER_NATIVE_modify/XQXC_CUSTUMER_NATIVE'
     # imageXcassetsName = 'Images.xcassets'
     # imageXcassetsPath = f'{workspacePath}/{imageXcassetsName}'
-    # # formatImageName(imageXcassetsPath)
-    # clear1XImage(imageXcassetsPath)
+    # slimImage(imageXcassetsPath)
+    # # clear1XImage(imageXcassetsPath)
     # exit(0)
 
     # print(len(sys.argv),sys.argv)
@@ -274,7 +278,6 @@ if __name__ == '__main__':
         workspacePath = sys.argv[1]
         imageXcassetsName = sys.argv[2] + '.xcassets'
         imageXcassetsPath = f'{workspacePath}/{imageXcassetsName}'
-        md5Manager = MD5Mgr()
         mode = int(sys.argv[3])
         print(imageXcassetsPath)
         if mode == 1:
