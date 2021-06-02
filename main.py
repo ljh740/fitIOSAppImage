@@ -15,6 +15,9 @@ from MD5Mgr import MD5Mgr
 
 
 TinyKeys = [
+    '14jGgQQJP1nhBmLsMzFbzFm4Fl7nFn2d',
+    'ND7bBbccsqlcCfr9p3ZyJV6q1CSyKP1L',
+    'hllT4DLPXsFHz3Y115yf6xLDPJY5ZlCn',
     'lJcr96FHq74Dt4KY7K0SnSsLwzzZg0Z9',
     'FmnXgPcNy8CYvjYpwJDXCBS9bykcsGzW',
     'Q8Pzzrwtlpptlc3hthyXTmTjyK4txQZc',
